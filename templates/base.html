@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Medical Document Assistant{% endblock %}</title>
+    
+    <!-- Apple-style fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Our Apple-style CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/apple-style.css') }}">
+    
+    <!-- Backend-injected configuration (secure, from .env) -->
+    <script>
+        window.CONFIG = {
+            supabaseUrl: '{{ supabase_url | safe }}',
+            supabaseKey: '{{ supabase_key | safe }}',
+            appName: '{{ app_name | safe }}',
+            version: '{{ version | safe }}',
+            features: {
+                databaseEnabled: {% if supabase_url and supabase_key %}true{% else %}false{% endif %},
+                fileUploadEnabled: true,
+                printEnabled: true,
+                darkModeEnabled: true
+            }
+        };
+        
+        // Log in development mode
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            console.log('📋 Config loaded from backend:', window.CONFIG.appName, 'v' + window.CONFIG.version);
+            if (window.CONFIG.features.databaseEnabled) {
+                console.log('✅ Supabase configured');
+            } else {
+                console.log('ℹ️  Supabase not configured (optional)');
+            }
+        }
+    </script>
+    
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="apple-navbar">
+        <div class="nav-content">
+            <div class="nav-left">
+                <div class="apple-logo">
+                    <i class="fas fa-stethoscope"></i>
+                    <span class="logo-text">Medical Assistant</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="{{ url_for('home') }}" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="{{ url_for('health') }}" class="nav-link">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>Status</span>
+                </a>
+                <!-- Database Status Indicator (will be shown/hidden by JS) -->
+                <div class="db-status-indicator" id="dbStatusIndicator" style="display: none;">
+                    <i class="fas fa-database"></i>
+                    <span id="dbStatusText">Connected</span>
+                </div>
+                <div class="theme-toggle">
+                    <button id="themeToggle" class="icon-button">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="apple-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="apple-footer">
+        <div class="footer-content">
+            <div class="disclaimer">
+                <p><i class="fas fa-info-circle"></i> For personal/family use only. Not a substitute for professional medical advice.</p>
+            </div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Privacy</a>
+                <span class="separator">•</span>
+                <a href="#" class="footer-link">Terms</a>
+                <span class="separator">•</span>
+                <a href="https://deepseek.com" target="_blank" class="footer-link">Powered by DeepSeek AI</a>
+            </div>
+            <div class="copyright">
+                <p>© <span id="current-year"></span> Medical Document Assistant. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript - Load in correct order -->
+    <!-- 1. First load Supabase library (from CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- 2. Then load main app logic -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    
+    <!-- 3. Finally load page-specific scripts -->
+    {% block scripts %}{% endblock %}
+    
+    <!-- Set current year -->
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

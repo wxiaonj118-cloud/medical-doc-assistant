@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results - Medical Assistant{% endblock %}
+
+{% block content %}
+<div class="apple-container">
+    <!-- Result Hero -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h1 class="hero-title">Analysis Results</h1>
+            <p class="hero-subtitle">AI-powered insights from your medical document</p>
+        </div>
+    </section>
+
+    <!-- Results Content -->
+    <section class="results-section">
+        {% if analysis %}
+        <!-- Demo mode with sample data -->
+        <div class="result-card">
+            <div class="result-header">
+                <div class="result-meta">
+                    <span><i class="fas fa-file"></i> sample_blood_test.pdf</span>
+                    <span><i class="fas fa-clock"></i> Analyzed just now</span>
+                </div>
+                <h2>AI Analysis Report</h2>
+            </div>
+            
+            <div class="result-content">
+                <div class="analysis-section">
+                    <h3><i class="fas fa-stethoscope"></i> Key Findings</h3>
+                    <div class="analysis-text">
+                        {{ analysis.analysis if analysis.analysis is string else analysis.analysis|safe }}
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="apple-button" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left"></i> Back to Upload
+                    </button>
+                    <button class="apple-button primary" onclick="window.print()">
+                        <i class="fas fa-print"></i> Print Report
+                    </button>
+                    <a href="{{ url_for('home') }}" class="apple-button secondary">
+                        <i class="fas fa-upload"></i> New Upload
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Real results would go here -->
+        <div class="result-card">
+            <div class="result-header">
+                <h2>No Analysis Available</h2>
+                <p>Upload a document or paste text to get AI analysis</p>
+            </div>
+            <div class="action-buttons">
+                <a href="{{ url_for('home') }}" class="apple-button primary">
+                    <i class="fas fa-upload"></i> Upload Document
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Tips Section -->
+    <section class="tips-section">
+        <h2><i class="fas fa-lightbulb"></i> Next Steps & Recommendations</h2>
+        <div class="tips-grid">
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <h3>Consult Your Doctor</h3>
+                <p>Share this analysis with your healthcare provider for professional interpretation.</p>
+            </div>
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h3>Prepare Questions</h3>
+                <p>Use the generated questions as a starting point for your doctor's appointment.</p>
+            </div>
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3>Schedule Follow-up</h3>
+                <p>Consider scheduling appropriate follow-up tests or appointments.</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Format analysis text
+    document.addEventListener('DOMContentLoaded', function() {
+        const analysisText = document.querySelector('.analysis-text');
+        if (analysisText) {
+            // Convert markdown-like formatting
+            let text = analysisText.innerHTML;
+            text = text.replace(/### (.*?)(<br>|$)/g, '<h4>$1</h4>');
+            text = text.replace(/## (.*?)(<br>|$)/g, '<h3>$1</h3>');
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            analysisText.innerHTML = text;
+        }
+    });
+</script>
+{% endblock %}

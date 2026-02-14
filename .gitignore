@@ -1,0 +1,86 @@
+# ===== CONFIGURATION FILES =====
+.env
+.env.local
+.env.*.local
+config.js
+supabase-config.json
+
+# ===== API KEYS & SECRETS =====
+*.key
+*.secret
+supabase-url.txt
+supabase-key.txt
+
+# ===== LOCAL FOLDERS TO EXCLUDE =====
+# Personal folders
+Wayne Documents/
+"Wayne Documents/"  # Try both with and without quotes
+archive/
+backups/
+**/backups/
+**/archive/
+
+# Catch backups/archive in any subfolder
+**/backups/
+**/archive/
+
+# ===== TEST FILES =====
+test_medical.pdf
+*.pdf
+test_*
+test_data/
+
+# ===== PYTHON =====
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyf
+*.pyz
+*.pyzw
+.python-version
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ===== VIRTUAL ENVIRONMENT =====
+.venv
+venv/
+ENV/
+env/
+myenv/
+virtualenv/
+
+# ===== NODE (if you add later) =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# ===== BUILD DIRECTORIES =====
+dist/
+build/
+*.egg-info/
+*.egg
+
+# ===== IDE FILES =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.bak
+*~
+
+# ===== OS FILES =====
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+*.log
+
+# ===== PROJECT SPECIFIC =====
+uploads/  # If you have an uploads folder
+instance/
+.flaskenv

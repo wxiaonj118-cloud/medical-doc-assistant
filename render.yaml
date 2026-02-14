@@ -1,0 +1,38 @@
+# render.yaml
+services:
+  - type: web
+    name: medical-doc-assistant
+    runtime: python
+    region: oregon  # or frankfurt, singapore, etc.
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    plan: free  # or starter, professional, etc.
+    
+    # Environment variables (values will be set in Render dashboard)
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true  # Render will generate a secure random value
+      - key: DEEPSEEK_API_KEY
+        sync: false  # You'll set this manually in dashboard
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: MAX_FILE_SIZE_MB
+        value: 10
+      - key: SESSION_COOKIE_SECURE
+        value: true
+      - key: SESSION_COOKIE_HTTPONLY
+        value: true
+      - key: SESSION_COOKIE_SAMESITE
+        value: Lax
+    
+    # Optional: Auto-deploy on git push
+    autoDeploy: true
+    
+    # Health check path (if you implement one)
+    healthCheckPath: /

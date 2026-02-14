@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Medical Document - Medical Assistant{% endblock %}
+
+{% block content %}
+<div class="apple-container">
+    <!-- Hero Section (Apple-style) -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-icon">
+                <i class="fas fa-file-medical-alt"></i>
+            </div>
+            <h1 class="hero-title">Medical Document Assistant</h1>
+            <p class="hero-subtitle">Upload medical reports for AI-powered analysis in plain language</p>
+            <div class="hero-badges">
+                <span class="badge"><i class="fas fa-shield-alt"></i> Secure & Private</span>
+                <span class="badge"><i class="fas fa-robot"></i> AI-Powered</span>
+                <span class="badge"><i class="fas fa-bolt"></i> Instant Analysis</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Upload Area -->
+    <section class="upload-section">
+        <div class="section-header">
+            <h2><i class="fas fa-cloud-upload-alt"></i> Upload Medical Document</h2>
+            <p>Supported formats: PDF, DOCX, DOC, TXT (Max 10MB)</p>
+        </div>
+
+        <div class="upload-container">
+            <!-- Drag & Drop Zone -->
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h3>Drag & Drop</h3>
+                <p>or click to browse files</p>
+                <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt" hidden>
+                <button class="apple-button primary" id="chooseFileButton">
+                    <i class="fas fa-folder-open"></i> Choose File
+                </button>
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <div class="file-preview">
+                        <i class="fas fa-file-pdf"></i>
+                        <div class="file-details">
+                            <span class="file-name" id="fileName">sample.pdf</span>
+                            <span class="file-size" id="fileSize">2.4 MB</span>
+                        </div>
+                        <button class="icon-button small" id="clearFileButton">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Or Text Input -->
+            <div class="alternative-option">
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+                <div class="text-input-section">
+                    <h4><i class="fas fa-keyboard"></i> Paste Medical Text</h4>
+                    <textarea 
+                        id="medicalText" 
+                        class="apple-textarea" 
+                        placeholder="Paste medical report text here... 
+Example: Patient blood test results: Glucose 95 mg/dL (normal range 70-99), Cholesterol 180 mg/dL..."
+                        rows="4"></textarea>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="apple-button secondary" id="analyzeTextButton">
+                    <i class="fas fa-comment-medical"></i> Analyze Text
+                </button>
+                <button class="apple-button primary" id="uploadButton" disabled>
+                    <i class="fas fa-robot"></i> Analyze Document
+                </button>
+            </div>
+
+            <!-- Loading Indicator (Hidden by default) -->
+            <div class="loading-indicator" id="loadingIndicator" style="display: none;">
+                <div class="apple-loading">
+                    <div class="loading-spinner"></div>
+                    <p>Analyzing with AI... This may take 10-20 seconds.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid (Apple-style cards) -->
+    <section class="features-section">
+        <h2 class="section-title">How It Works</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-upload"></i>
+                </div>
+                <h3>Upload</h3>
+                <p>Securely upload medical documents or paste text</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>AI Analysis</h3>
+                <p>DeepSeek AI analyzes and explains in plain language</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3>Get Insights</h3>
+                <p>Key findings and questions for your doctor</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3>Private & Secure</h3>
+                <p>Your data is processed securely and not stored</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Test Section -->
+    <section class="demo-section">
+        <div class="demo-card">
+            <div class="demo-header">
+                <h3><i class="fas fa-vial"></i> Try Quick Test</h3>
+                <p>Test with sample medical text</p>
+            </div>
+            <div class="demo-content">
+                <button class="apple-button outline" id="loadSampleButton">
+                    <i class="fas fa-magic"></i> Load Sample
+                </button>
+                <button class="apple-button" id="testAPIButton">
+                    <i class="fas fa-play"></i> Test API Connection
+                </button>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Result Modal (Will be shown after analysis) -->
+<div class="apple-modal" id="resultModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-chart-line"></i> Analysis Results</h2>
+            <button class="icon-button" id="closeModalButton">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body" id="resultContent">
+            <!-- Results will be inserted here -->
+        </div>
+        <div class="modal-footer">
+            <button class="apple-button" id="closeModalButton2">Close</button>
+            <button class="apple-button primary" id="printButton">
+                <i class="fas fa-print"></i> Print
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Error Toast -->
+<div class="apple-toast" id="errorToast">
+    <div class="toast-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="toastMessage">An error occurred</span>
+    </div>
+    <button class="toast-close" id="closeToastButton">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<!-- No inline JavaScript here - everything is in app.js -->
+{% endblock %}
