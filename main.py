@@ -184,7 +184,7 @@ def test_upload():
             
             # Add AI analysis if available
             if ai_analyzer and os.getenv('DEEPSEEK_API_KEY'):
-                result = ai_analyzer.analyze_medical_text(text[:3000], "en")
+                result = ai_analyzer.analyze_medical_text(text[:3000])
                 if result.get('success'):
                     response['ai_analysis'] = result['analysis']
                 else:
@@ -218,7 +218,7 @@ def test_text():
     text = data['text']
     
     if ai_analyzer and os.getenv('DEEPSEEK_API_KEY'):
-        result = ai_analyzer.analyze_medical_text(text[:3000], "en")
+        result = ai_analyzer.analyze_medical_text(text[:3000])
         if result.get('success'):
             return jsonify({
                 "success": True,
