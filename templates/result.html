@@ -97,17 +97,65 @@
 
 {% block scripts %}
 <script>
-    // Format analysis text
+    // Format analysis text for better mobile display
     document.addEventListener('DOMContentLoaded', function() {
         const analysisText = document.querySelector('.analysis-text');
         if (analysisText) {
-            // Convert markdown-like formatting
             let text = analysisText.innerHTML;
+            
+            // Convert markdown-like formatting
             text = text.replace(/### (.*?)(<br>|$)/g, '<h4>$1</h4>');
             text = text.replace(/## (.*?)(<br>|$)/g, '<h3>$1</h3>');
+            text = text.replace(/# (.*?)(<br>|$)/g, '<h3>$1</h3>');
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            analysisText.innerHTML = text;
+            
+            // Handle numbered sections (1. 📊 **Key Values**)
+            text = text.replace(/(\d+\.\s*[📊🔍🏥💊⚠️❓📋]?\s*\*\*.*?\*\*)/g, '<div class="section-title">$1</div>');
+            
+            // Ensure bullet points are properly formatted
+            text = text.replace(/^- /gm, '• ');  // Convert dash bullets to proper bullet points
+            
+            // Wrap lines in paragraphs where appropriate
+            const lines = text.split('\n');
+            let formattedText = '';
+            let inList = false;
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (line.startsWith('• ') || line.match(/^\d+\./)) {
+                    // This is a list item
+                    if (!inList) {
+                        formattedText += '<ul>';
+                        inList = true;
+                    }
+                    formattedText += `<li>${line.substring(2)}</li>`;
+                } else {
+                    // Not a list item
+                    if (inList) {
+                        formattedText += '</ul>';
+                        inList = false;
+                    }
+                    if (line.length > 0) {
+                        // Check if it's a section title
+                        if (line.includes('section-title')) {
+                            formattedText += line;
+                        } else {
+                            formattedText += `<p>${line}</p>`;
+                        }
+                    }
+                }
+            }
+            
+            // Close any open list
+            if (inList) {
+                formattedText += '</ul>';
+            }
+            
+            analysisText.innerHTML = formattedText;
+            
+            // Add CSS class for mobile optimization
+            analysisText.classList.add('mobile-optimized');
         }
     });
 </script>

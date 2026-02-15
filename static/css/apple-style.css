@@ -881,38 +881,167 @@ a:hover {
     }
 }
 
-/* Print Styles - Commented out as in original */
-/*
-@media print {
-    .apple-navbar,
-    .apple-footer,
-    .modal-header,
-    .modal-footer,
-    .icon-button,
-    .apple-button,
-    #printButton {
-        display: none !important;
+/* ===== AI ANALYSIS RESPONSE FIXES FOR MOBILE ===== */
+
+/* Analysis text container improvements */
+.analysis-text {
+    font-size: 16px;  /* Base size for readability */
+    line-height: 1.6;  /* Better line spacing */
+    color: var(--text-primary);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;  /* Prevents long words from breaking layout */
+    max-width: 100%;
+    padding: 0.5rem 0;
+}
+
+/* Preserve markdown-like formatting in analysis */
+.analysis-text h3 {
+    font-size: 1.3rem;
+    margin: 1.5rem 0 0.75rem 0;
+    color: var(--accent-blue);
+    font-weight: 600;
+}
+
+.analysis-text h4 {
+    font-size: 1.1rem;
+    margin: 1.25rem 0 0.5rem 0;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.analysis-text strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.analysis-text em {
+    font-style: italic;
+}
+
+/* Bullet point styling */
+.analysis-text ul, 
+.analysis-text ol {
+    margin: 0.75rem 0 1rem 1.5rem;
+    padding-left: 0.5rem;
+}
+
+.analysis-text li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    position: relative;
+    list-style-type: disc;
+}
+
+/* Numbered list styling */
+.analysis-text ol {
+    list-style-type: decimal;
+}
+
+.analysis-text ol li {
+    list-style-type: decimal;
+}
+
+/* Special formatting for the 7 sections with emoji */
+.analysis-text p {
+    margin-bottom: 0.75rem;
+}
+
+/* Emoji and section title styling */
+.analysis-text .section-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin: 1.5rem 0 0.75rem 0;
+    color: var(--text-primary);
+}
+
+/* Mobile-specific overrides */
+@media (max-width: 768px) {
+    .result-card {
+        padding: 1rem !important;
+        margin: 0 !important;
+        border-radius: var(--radius-medium);
     }
     
-    .apple-modal {
-        position: static;
-        background: none;
-        display: block !important;
+    .analysis-text {
+        font-size: 15px;  /* Slightly smaller but still readable */
+        padding: 0 0.25rem;
     }
     
-    .modal-content {
-        box-shadow: none;
-        border: none;
-        max-height: none;
+    .analysis-text h3 {
+        font-size: 1.2rem;
+        margin: 1.25rem 0 0.5rem 0;
     }
     
-    .modal-body {
-        max-height: none;
+    .analysis-text h4 {
+        font-size: 1rem;
+        margin: 1rem 0 0.35rem 0;
     }
     
-    .print-footer {
-        border-top: 1px solid #000;
-        color: #666;
+    /* Better bullet spacing on mobile */
+    .analysis-text ul, 
+    .analysis-text ol {
+        margin: 0.5rem 0 0.75rem 1.25rem;
+    }
+    
+    .analysis-text li {
+        margin-bottom: 0.5rem;
+        padding-right: 0.5rem;  /* Prevents text from touching edge */
+    }
+    
+    /* Ensure code blocks wrap */
+    .analysis-text pre,
+    .analysis-text code {
+        white-space: pre-wrap;
+        font-size: 14px;
+        background-color: var(--bg-tertiary);
+        padding: 0.2rem 0.4rem;
+        border-radius: var(--radius-small);
     }
 }
-*/
+
+/* Extra small devices (iPhone SE, etc) */
+@media (max-width: 375px) {
+    .analysis-text {
+        font-size: 14px;
+    }
+    
+    .analysis-text ul, 
+    .analysis-text ol {
+        margin-left: 1rem;
+    }
+    
+    .analysis-text li {
+        margin-bottom: 0.6rem;
+    }
+}
+
+/* Fix for result card container */
+.result-card {
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-large);
+    padding: 2rem;
+    box-shadow: var(--shadow-medium);
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;  /* Prevents horizontal scroll */
+}
+
+.result-content {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Ensure the analysis section doesn't overflow */
+.analysis-section {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    margin-bottom: 2rem;
+}
+
+.analysis-section h3 {
+    margin-bottom: 1rem;
+    color: var(--accent-blue);
+}
