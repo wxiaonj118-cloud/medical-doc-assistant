@@ -4,6 +4,7 @@ DeepSeek AI integration for medical document analysis
 from openai import OpenAI
 from typing import Dict
 import logging
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -14,12 +15,25 @@ class AIAnalyzer:
         self.client = OpenAI(api_key=api_key, base_url=base_url)
         self.model = model
     
-    def analyze_medical_text(self, text: str, language: str = "en") -> Dict:
+    def detect_language(self, text: str) -> str:
+        """Detect if text contains Chinese characters"""
+        # Check for Chinese characters (Unicode range for CJK)
+        chinese_pattern = re.compile(r'[\u4e00-\u9fff\u3400-\u4dbf\u20000-\u2a6df\u2a700-\u2b73f\u2b740-\u2b81f\u2b820-\u2ceaf\uf900-\ufaff\u2f800-\u2fa1f]')
+        if chinese_pattern.search(text):
+            return "zh"
+        return "en"
+    
+    def analyze_medical_text(self, text: str, language: str = None) -> Dict:
         """Analyze medical text with enhanced clinical analysis"""
         if not text.strip():
             return {"error": "No text provided"}
         
         try:
+            # Auto-detect language if not specified
+            if language is None:
+                language = self.detect_language(text)
+                print(f"🌐 Detected language: {language}")
+            
             # Truncate if too long
             max_length = 8000
             if len(text) > max_length:
@@ -70,7 +84,8 @@ class AIAnalyzer:
 - 只有7个类别标题可以使用**加粗**，内容部分绝对不允许使用任何**加粗**、*斜体*、`代码`等格式
 - 每个要点必须以"- "开头，后面直接跟纯文本
 - 语言简明扼要，每项2-4个要点
-- 直接呈现结果，无需开场白和结束语"""
+- 直接呈现结果，无需开场白和结束语
+- **重要：请务必用中文回答，因为用户输入是中文**"""
             else:
                 prompt = f"""As a medical information specialist, please analyze this medical document and provide a comprehensive clinical interpretation:
 
@@ -136,40 +151,25 @@ When interpreting Non-HDL Cholesterol and LDL-C, pay close attention to patient-
 6. No introductory sentences, no conclusions, no extra text
 7. If data is insufficient, state "Not specified in report" as plain text
 
-Example of CORRECT format (notice plain text in bullet points):
-1. 📊 **Key Values**
-- LDL-C: 102 mg/dL (above target of <100 mg/dL for high-risk patients)
-- Non-HDL-C: 125 mg/dL (elevated for high-risk patients - target <100 mg/dL for diabetes with ASCVD risk factors)
-- Other values (HDL, Triglycerides) are normal
-
-Example of INCORRECT format (do NOT do this):
-- LDL-C: **102 mg/dL** (above target)  ← NO bold in content
-- Non-HDL-C: 125 mg/dL (elevated, above target of <130 mg/dL)  ← Logically incorrect if 125 < 130
-
 Provide a concise, clinically-oriented analysis with absolutely no formatting in the bullet points."""
-
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": """You are an experienced clinical information specialist and medical educator. 
+            
+            # Add language instruction to system message
+            system_content = """You are an experienced clinical information specialist and medical educator. 
 Your role is to help patients understand their medical documents by providing professional, evidence-based interpretation.
 
 **STRICT OUTPUT RULE**: ONLY the 7 section titles may have **bold** formatting. All bullet points must be plain text with no asterisks, no bold, no italics, no markdown of any kind.
 
 **CLINICAL ACCURACY RULE**: When interpreting lab values, always ensure logical consistency. Never state that a value is "above target" when it is numerically below that target. If multiple targets exist (general vs. high-risk), clearly specify which target is being applied based on patient risk factors mentioned in the document.
 
-Example:
-✅ 1. 📊 **Key Values**  ← bold is OK here
-- LDL-C: 102 mg/dL (above target of <100 mg/dL for high-risk patients)  ← plain text only, NO bold
-- Non-HDL-C: 125 mg/dL (elevated for high-risk patients - target <100 mg/dL)  ← logically consistent
+**LANGUAGE RULE**: You MUST respond in the SAME LANGUAGE as the user's input. If the user writes in Chinese, respond in Chinese. If the user writes in English, respond in English."""
 
-❌ DO NOT write:
-- Non-HDL-C: 125 mg/dL (elevated, above target of <130 mg/dL)  ← logically contradictory
-- LDL-C: **102 mg/dL** (above target)  ← NO bold in content
-
-You translate complex medical information into understandable insights while maintaining clinical accuracy.
-You always distinguish between confirmed findings and possibilities that need physician evaluation.
-You empower patients to have more informed discussions with their doctors."""},
+            if language == "zh":
+                system_content += " 用户输入是中文，请务必用中文回答。"
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_content},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.4,
@@ -183,7 +183,7 @@ You empower patients to have more informed discussions with their doctors."""},
                 "analysis": analysis,
                 "language": language,
                 "model": self.model,
-                "disclaimer": "This analysis is for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult with a qualified healthcare provider for medical concerns."
+                "disclaimer": "此分析仅供信息参考，不能替代专业医疗建议、诊断或治疗。如有医疗问题，请务必咨询合格的医疗保健提供者。" if language == "zh" else "This analysis is for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult with a qualified healthcare provider for medical concerns."
             }
             
         except Exception as e:
