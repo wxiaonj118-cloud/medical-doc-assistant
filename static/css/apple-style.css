@@ -1137,3 +1137,240 @@ a:hover {
     overflow-wrap: break-word !important;
     hyphens: auto !important;
 }
+
+/* ===== PWA INSTALL BANNER ===== */
+.pwa-install-banner {
+    background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+    color: white;
+    border-radius: var(--radius-medium);
+    margin: 10px 20px 20px 20px;
+    padding: 16px 20px;
+    box-shadow: 0 8px 20px rgba(0, 122, 255, 0.3);
+    animation: slideDown 0.3s ease;
+    position: relative;
+    z-index: 100;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pwa-install-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.pwa-install-icon {
+    font-size: 28px;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pwa-install-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.pwa-install-text strong {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.pwa-install-text span {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.pwa-install-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pwa-install-actions .apple-button.small {
+    background: white;
+    color: #007aff;
+    border: none;
+    padding: 8px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pwa-install-actions .apple-button.small:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.pwa-install-actions .icon-button.small {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 14px;
+}
+
+.pwa-install-actions .icon-button.small:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* iOS Instructions */
+.pwa-ios-instructions {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.ios-instruction-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 14px;
+}
+
+.ios-instruction-step i {
+    font-size: 16px;
+}
+
+.ios-instruction-arrow {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+}
+
+/* Mobile Responsive for PWA banner */
+@media (max-width: 768px) {
+    .pwa-install-content {
+        gap: 10px;
+    }
+    
+    .pwa-install-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+    
+    .pwa-install-text strong {
+        font-size: 15px;
+    }
+    
+    .pwa-install-text span {
+        font-size: 13px;
+    }
+    
+    .ios-instruction-step {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pwa-install-banner {
+        margin: 5px 10px 15px 10px;
+        padding: 12px 15px;
+    }
+    
+    .pwa-install-content {
+        flex-wrap: nowrap;
+    }
+    
+    .pwa-install-text span {
+        display: none; /* Hide description on very small screens */
+    }
+    
+    .pwa-ios-instructions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .ios-instruction-arrow {
+        transform: rotate(90deg);
+    }
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+    .pwa-install-banner {
+        padding-bottom: env(safe-area-inset-bottom, 16px);
+    }
+}
+
+/* ===== PWA INSTALLED STATE ===== */
+@media all and (display-mode: standalone) {
+    /* Hide install banner when app is installed */
+    .pwa-install-banner {
+        display: none !important;
+    }
+    
+    /* Add extra padding for standalone mode */
+    body {
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    
+    /* Adjust navigation for standalone mode */
+    .apple-navbar {
+        padding-top: max(0.75rem, env(safe-area-inset-top));
+    }
+    
+    /* Hide any browser-specific UI hints */
+    .browser-hint {
+        display: none !important;
+    }
+}
+
+/* iOS standalone mode specific */
+@media all and (display-mode: standalone) and (orientation: portrait) {
+    .apple-main {
+        padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+    }
+}
+
+/* Dark mode support for PWA banner */
+[data-theme="dark"] .pwa-install-banner {
+    background: linear-gradient(135deg, #0a84ff 0%, #5e5ce6 100%);
+    box-shadow: 0 8px 20px rgba(10, 132, 255, 0.3);
+}
+
+[data-theme="dark"] .pwa-install-actions .apple-button.small {
+    background: #1c1c1e;
+    color: #0a84ff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .pwa-install-actions .icon-button.small {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .pwa-install-actions .icon-button.small:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+[data-theme="dark"] .ios-instruction-step {
+    background: rgba(255, 255, 255, 0.15);
+}

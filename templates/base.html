@@ -2,8 +2,19 @@
 <html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>{% block title %}Medical Document Assistant{% endblock %}</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#007aff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="MedDoc AI">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ url_for('static', filename='icons/icon-152.png') }}">
+    <link rel="apple-touch-icon" sizes="167x167" href="{{ url_for('static', filename='icons/icon-167.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/icon-180.png') }}">
     
     <!-- Apple-style fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -106,6 +117,98 @@
     
     <!-- 3. Finally load page-specific scripts -->
     {% block scripts %}{% endblock %}
+    
+    <!-- Register Service Worker for PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/static/service-worker.js').then(function(registration) {
+                    console.log('✅ ServiceWorker registered: ', registration.scope);
+                }, function(err) {
+                    console.log('❌ ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+    
+    <!-- PWA Installation Handler -->
+    <script>
+        let deferredPrompt;
+        const installBanner = document.getElementById('pwa-install-banner');
+        const installButton = document.getElementById('pwa-install-button');
+        const closeButton = document.getElementById('pwa-close-banner');
+        const iosInstructions = document.getElementById('pwa-ios-instructions');
+        
+        // Check if already installed
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                            window.navigator.standalone ||
+                            document.referrer.includes('android-app://');
+        
+        if (!isStandalone) {
+            // Check if iOS
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
+            if (isIOS) {
+                // iOS devices need different prompt
+                setTimeout(() => {
+                    if (installBanner) {
+                        installBanner.style.display = 'block';
+                        if (iosInstructions) iosInstructions.style.display = 'flex';
+                        if (installButton) installButton.style.display = 'none';
+                    }
+                }, 2000);
+            } else {
+                // Android/Chrome - listen for install prompt
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    deferredPrompt = e;
+                    
+                    // Show banner after a short delay
+                    setTimeout(() => {
+                        if (installBanner) installBanner.style.display = 'block';
+                    }, 2000);
+                });
+            }
+            
+            // Handle install button click
+            if (installButton) {
+                installButton.addEventListener('click', async () => {
+                    if (!deferredPrompt) return;
+                    
+                    installButton.textContent = 'Installing...';
+                    installButton.disabled = true;
+                    
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    
+                    if (outcome === 'accepted') {
+                        console.log('✅ App installed');
+                        if (installBanner) installBanner.style.display = 'none';
+                    } else {
+                        console.log('❌ Installation cancelled');
+                        installButton.textContent = 'Install';
+                        installButton.disabled = false;
+                    }
+                    
+                    deferredPrompt = null;
+                });
+            }
+            
+            // Handle close button
+            if (closeButton) {
+                closeButton.addEventListener('click', () => {
+                    if (installBanner) installBanner.style.display = 'none';
+                    // Store in session storage to not show again this session
+                    sessionStorage.setItem('pwa-banner-closed', 'true');
+                });
+            }
+        }
+        
+        // Don't show banner if previously closed in this session
+        if (sessionStorage.getItem('pwa-banner-closed') === 'true') {
+            if (installBanner) installBanner.style.display = 'none';
+        }
+    </script>
     
     <!-- Set current year -->
     <script>

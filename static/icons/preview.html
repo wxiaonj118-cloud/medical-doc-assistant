@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PWA Icons Preview</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            padding: 20px; 
+            background: #f5f5f7; 
+            margin: 0;
+        }
+        h1 { 
+            color: #1d1d1f; 
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .icon-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+            gap: 20px; 
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .icon-card { 
+            background: white; 
+            border-radius: 12px; 
+            padding: 20px 10px; 
+            text-align: center; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .icon-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .icon-card img { 
+            width: 64px; 
+            height: 64px; 
+            object-fit: contain;
+        }
+        .icon-size { 
+            margin-top: 10px; 
+            font-weight: 600; 
+            color: #1d1d1f; 
+            font-size: 14px;
+        }
+        .icon-path { 
+            font-size: 11px; 
+            color: #86868b; 
+            word-break: break-all;
+            margin-top: 4px;
+        }
+        .note {
+            text-align: center;
+            color: #86868b;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 Medical Document Assistant - PWA Icons</h1>
+    
+    <div class="icon-grid">
+        <!-- SVG Icon -->
+        <div class="icon-card">
+            <img src="stethoscope-solid-full.svg" alt="SVG icon">
+            <div class="icon-size">SVG (any size)</div>
+            <div class="icon-path">stethoscope-solid-full.svg</div>
+        </div>
+        
+        <!-- PNG Icons -->
+        <div class="icon-card">
+            <img src="icon-72.png" alt="72x72 icon">
+            <div class="icon-size">72x72</div>
+            <div class="icon-path">icon-72.png</div>
+        </div>
+        
+        <div class="icon-card">
+            <img src="icon-96.png" alt="96x96 icon">
+            <div class="icon-size">96x96</div>
+            <div class="icon-path">icon-96.png</div>
+        </div>
+        
+        <div class="icon-card">
+            <img src="icon-128.png" alt="128x128 icon">
+            <div class="icon-size">128x128</div>
+            <div class="icon-path">icon-128.png</div>
+        </div>
+        
+        <div class="icon-card">
+            <img src="icon-144.png" alt="144x144 icon">
+            <div class="icon-size">144x144</div>
+            <div class="icon-path">icon-144.png</div>
+        </div>
+        
+        <div class="icon-card">
+            <img src="icon-152.png" alt="152x152 icon">
+            <div class="icon-size">152x152</div>
+            <div class="icon-path">icon-152.png</div>
+        </div>
+        
+        <div class="icon-card">
+            <img src="icon-167.png" alt="167x167 icon">
+            <div class="icon-size">167x167</div>
+            <div class="icon-path">icon-167.png</div>
+        </div>
+        
+        <div class="icon-card">
+            <img src="icon-180.png" alt="180x180 icon">
+            <div class="icon-size">180x180</div>
+            <div class="icon-path">icon-180.png</div>
+        </div>
+        
+        <div class="icon-card">
+            <img src="icon-192.png" alt="192x192 icon">
+            <div class="icon-size">192x192</div>
+            <div class="icon-path">icon-192.png</div>
+        </div>
+        
+        <div class="icon-card">
+            <img src="icon-384.png" alt="384x384 icon">
+            <div class="icon-size">384x384</div>
+            <div class="icon-path">icon-384.png</div>
+        </div>
+        
+        <div class="icon-card">
+            <img src="icon-512.png" alt="512x512 icon">
+            <div class="icon-size">512x512</div>
+            <div class="icon-path">icon-512.png</div>
+        </div>
+    </div>
+    
+    <div class="note">
+        ✅ All icons generated successfully!<br>
+        <small>Total: 1 SVG + 10 PNG files</small>
+    </div>
+</body>
+</html>
