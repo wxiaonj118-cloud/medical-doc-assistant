@@ -115,6 +115,18 @@ Please provide analysis in EXACTLY this format with 7 sections and bullet points
 - Monitoring: [specific tests and intervals]
 - Evidence-based: [relevant clinical guidelines]
 
+**IMPORTANT INTERPRETATION GUIDELINES FOR LIPID PANELS:**
+When interpreting Non-HDL Cholesterol and LDL-C, pay close attention to patient-specific risk factors mentioned in the document:
+
+- For Non-HDL Cholesterol:
+  * General population target: <130 mg/dL
+  * For high-risk patients (diabetes + 1 major ASCVD risk factor): target <100 mg/dL (therapeutic option)
+  * For patients with CHD or diabetic patients with ≥2 CHD risk factors: LDL-C target <70 mg/dL
+
+- When a value is flagged as elevated, ALWAYS specify WHICH target is being applied
+- Example of CORRECT interpretation: "Non-HDL Cholesterol: 125 mg/dL (elevated for high-risk patients - target <100 mg/dL for diabetes with ASCVD risk factors)"
+- Example of INCORRECT interpretation: "Non-HDL Cholesterol: 125 mg/dL (elevated, above target of <130 mg/dL)" - this is contradictory because 125 < 130
+
 **CRITICAL FORMATTING RULES - READ CAREFULLY:**
 1. ONLY the 7 section titles (1. 📊 **Key Values**, etc.) may have **double asterisks** for bold
 2. NEVER use **bold**, *italic*, `code`, or any other markdown formatting in the bullet points
@@ -126,16 +138,16 @@ Please provide analysis in EXACTLY this format with 7 sections and bullet points
 
 Example of CORRECT format (notice plain text in bullet points):
 1. 📊 **Key Values**
-- LDL-C: 102 mg/dL (above target of <100 mg/dL)
-- Non-HDL-C: 125 mg/dL (elevated)
-- Other values are normal
+- LDL-C: 102 mg/dL (above target of <100 mg/dL for high-risk patients)
+- Non-HDL-C: 125 mg/dL (elevated for high-risk patients - target <100 mg/dL for diabetes with ASCVD risk factors)
+- Other values (HDL, Triglycerides) are normal
 
 Example of INCORRECT format (do NOT do this):
 - LDL-C: **102 mg/dL** (above target)  ← NO bold in content
-- Supports: **Primary Hypercholesterolemia**  ← NO bold in content
+- Non-HDL-C: 125 mg/dL (elevated, above target of <130 mg/dL)  ← Logically incorrect if 125 < 130
 
 Provide a concise, clinically-oriented analysis with absolutely no formatting in the bullet points."""
-            
+
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
@@ -144,13 +156,16 @@ Your role is to help patients understand their medical documents by providing pr
 
 **STRICT OUTPUT RULE**: ONLY the 7 section titles may have **bold** formatting. All bullet points must be plain text with no asterisks, no bold, no italics, no markdown of any kind.
 
+**CLINICAL ACCURACY RULE**: When interpreting lab values, always ensure logical consistency. Never state that a value is "above target" when it is numerically below that target. If multiple targets exist (general vs. high-risk), clearly specify which target is being applied based on patient risk factors mentioned in the document.
+
 Example:
 ✅ 1. 📊 **Key Values**  ← bold is OK here
-- LDL-C: 102 mg/dL (above target)  ← plain text only, NO bold
+- LDL-C: 102 mg/dL (above target of <100 mg/dL for high-risk patients)  ← plain text only, NO bold
+- Non-HDL-C: 125 mg/dL (elevated for high-risk patients - target <100 mg/dL)  ← logically consistent
 
 ❌ DO NOT write:
-- LDL-C: **102 mg/dL** (above target)
-- Supports: **Primary Hypercholesterolemia**
+- Non-HDL-C: 125 mg/dL (elevated, above target of <130 mg/dL)  ← logically contradictory
+- LDL-C: **102 mg/dL** (above target)  ← NO bold in content
 
 You translate complex medical information into understandable insights while maintaining clinical accuracy.
 You always distinguish between confirmed findings and possibilities that need physician evaluation.
