@@ -234,17 +234,47 @@
             }
             
             addWordBreakToTextNodes(analysisText);
+            
+            // NEW: Force word breaking on all list items and paragraphs
+            function forceWordBreak() {
+                const elements = document.querySelectorAll('.analysis-text li, .analysis-text p, .analysis-text span, .analysis-text div');
+                elements.forEach(el => {
+                    el.style.setProperty('word-break', 'break-word', 'important');
+                    el.style.setProperty('overflow-wrap', 'break-word', 'important');
+                    el.style.setProperty('hyphens', 'auto', 'important');
+                    el.style.setProperty('-webkit-hyphens', 'auto', 'important');
+                });
+            }
+            
+            // Call it after the other functions
+            forceWordBreak();
+            
+            // Also add a mutation observer to handle any dynamically added content
+            const observer = new MutationObserver(function(mutations) {
+                forceWordBreak();
+            });
+            observer.observe(analysisText, { childList: true, subtree: true });
         }
     });
     
-    // Add CSS rule for long words dynamically
+    // Add CSS rule for long words dynamically - ENHANCED
     const style = document.createElement('style');
     style.textContent = `
-        .analysis-text li, .analysis-text p {
+        .analysis-text li, 
+        .analysis-text p, 
+        .analysis-text span,
+        .analysis-text div {
             word-break: break-word !important;
             overflow-wrap: break-word !important;
             -webkit-hyphens: auto !important;
             hyphens: auto !important;
+            max-width: 100% !important;
+        }
+        
+        /* Ultra-specific fix for long medical terms */
+        .analysis-text li {
+            word-break: break-word !important;
+            overflow-wrap: break-word !important;
         }
     `;
     document.head.appendChild(style);

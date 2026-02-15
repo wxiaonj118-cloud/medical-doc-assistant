@@ -893,7 +893,7 @@ a:hover {
     word-wrap: break-word;
     overflow-wrap: break-word;
     word-break: break-word;
-    hyphens: auto;  /* Adds hyphens when words break */
+    hyphens: auto;
     -webkit-hyphens: auto;
     -moz-hyphens: auto;
     -ms-hyphens: auto;
@@ -915,14 +915,16 @@ a:hover {
     max-width: 100%;
 }
 
-/* Specifically target long medical terms */
+/* Specifically target long medical terms - FIXED SELECTORS */
 .analysis-text li,
 .analysis-text p,
 .analysis-text span,
 .analysis-text div {
     max-width: 100%;
-    word-break: break-word;
-    overflow-wrap: break-word;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
 }
 
 /* Preserve markdown-like formatting in analysis */
@@ -968,11 +970,11 @@ a:hover {
     max-width: 100%;
     padding-right: 0.5rem;
     
-    /* Critical for long words */
-    word-break: break-word;
-    overflow-wrap: break-word;
-    -webkit-hyphens: auto;
-    hyphens: auto;
+    /* Critical for long words - using !important to override */
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
 }
 
 /* Special handling for numbered lists */
@@ -1002,7 +1004,7 @@ a:hover {
         padding: 1rem !important;
         margin: 0.5rem !important;
         border-radius: var(--radius-medium);
-        width: calc(100% - 1rem) !important;  /* Ensure full width with margin */
+        width: calc(100% - 1rem) !important;
     }
     
     .analysis-text {
@@ -1033,10 +1035,10 @@ a:hover {
         padding-right: 0.25rem;
         
         /* Force break for long medical terms */
-        word-break: break-word;
-        overflow-wrap: break-word;
-        -webkit-hyphens: auto;
-        hyphens: auto;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        hyphens: auto !important;
+        -webkit-hyphens: auto !important;
     }
     
     /* Ensure code blocks wrap */
@@ -1086,8 +1088,8 @@ a:hover {
     box-shadow: var(--shadow-medium);
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;  /* Prevents horizontal scroll */
-    box-sizing: border-box;  /* Include padding in width calculation */
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .result-content {
@@ -1111,13 +1113,27 @@ a:hover {
     color: var(--accent-blue);
 }
 
-/* Critical fix for the specific word in your screenshot */
-.analysis-text li:contains("hypercholesterolemia") {
-    word-break: break-all;  /* Force break for this specific long word */
+/* Force break for ALL long words - FIXED VERSION */
+.analysis-text li,
+.analysis-text p,
+.analysis-text span,
+.analysis-text div {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+}
+
+/* Additional ultra-specific fix for medical terms */
+.analysis-text li {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    max-width: 100%;
 }
 
 /* General long word breaker for any text */
 .long-word-break {
-    word-break: break-all !important;
+    word-break: break-word !important;
     overflow-wrap: break-word !important;
+    hyphens: auto !important;
 }
