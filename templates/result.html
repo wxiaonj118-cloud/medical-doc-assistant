@@ -97,50 +97,92 @@
 
 {% block scripts %}
 <script>
-    // Format analysis text for better mobile display
+    // Format analysis text for better mobile display - ENHANCED
     document.addEventListener('DOMContentLoaded', function() {
         const analysisText = document.querySelector('.analysis-text');
         if (analysisText) {
             let text = analysisText.innerHTML;
             
+            // First, protect existing HTML tags
+            const tagRegex = /<[^>]*>/g;
+            const tags = [];
+            let tagIndex = 0;
+            text = text.replace(tagRegex, function(match) {
+                tags[tagIndex] = match;
+                return `___TAG${tagIndex++}___`;
+            });
+            
             // Convert markdown-like formatting
-            text = text.replace(/### (.*?)(<br>|$)/g, '<h4>$1</h4>');
-            text = text.replace(/## (.*?)(<br>|$)/g, '<h3>$1</h3>');
-            text = text.replace(/# (.*?)(<br>|$)/g, '<h3>$1</h3>');
+            text = text.replace(/### (.*?)(?:___TAG|$)/g, '<h4>$1</h4>');
+            text = text.replace(/## (.*?)(?:___TAG|$)/g, '<h3>$1</h3>');
+            text = text.replace(/# (.*?)(?:___TAG|$)/g, '<h3>$1</h3>');
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
             
             // Handle numbered sections (1. 📊 **Key Values**)
             text = text.replace(/(\d+\.\s*[📊🔍🏥💊⚠️❓📋]?\s*\*\*.*?\*\*)/g, '<div class="section-title">$1</div>');
             
-            // Ensure bullet points are properly formatted
-            text = text.replace(/^- /gm, '• ');  // Convert dash bullets to proper bullet points
+            // Replace dash bullets with proper bullets
+            text = text.replace(/^- /gm, '• ');
             
-            // Wrap lines in paragraphs where appropriate
+            // Restore HTML tags
+            text = text.replace(/___TAG(\d+)___/g, function(match, index) {
+                return tags[index] || match;
+            });
+            
+            // Split into lines and rebuild with proper HTML structure
             const lines = text.split('\n');
             let formattedText = '';
             let inList = false;
+            let listType = null;
             
             for (let line of lines) {
                 line = line.trim();
-                if (line.startsWith('• ') || line.match(/^\d+\./)) {
-                    // This is a list item
-                    if (!inList) {
-                        formattedText += '<ul>';
+                
+                // Check if this is a list item (bullet or numbered)
+                if (line.startsWith('• ')) {
+                    // Bullet list item
+                    if (!inList || listType !== 'ul') {
+                        if (inList) formattedText += `</${listType}>`;
+                        formattedText += '<ul class="analysis-list">';
                         inList = true;
+                        listType = 'ul';
                     }
-                    formattedText += `<li>${line.substring(2)}</li>`;
-                } else {
+                    // Extract the content after the bullet
+                    const content = line.substring(2);
+                    formattedText += `<li>${content}</li>`;
+                } 
+                else if (line.match(/^\d+\.\s/)) {
+                    // Numbered list item
+                    if (!inList || listType !== 'ol') {
+                        if (inList) formattedText += `</${listType}>`;
+                        formattedText += '<ol class="analysis-list">';
+                        inList = true;
+                        listType = 'ol';
+                    }
+                    // Extract the content after the number
+                    const content = line.replace(/^\d+\.\s/, '');
+                    formattedText += `<li>${content}</li>`;
+                }
+                else {
                     // Not a list item
                     if (inList) {
-                        formattedText += '</ul>';
+                        formattedText += `</${listType}>`;
                         inList = false;
+                        listType = null;
                     }
+                    
                     if (line.length > 0) {
-                        // Check if it's a section title
+                        // Check if it's a section title (already wrapped)
                         if (line.includes('section-title')) {
                             formattedText += line;
-                        } else {
+                        } 
+                        // Check if it's a heading
+                        else if (line.startsWith('<h3') || line.startsWith('<h4')) {
+                            formattedText += line;
+                        }
+                        // Regular paragraph
+                        else {
                             formattedText += `<p>${line}</p>`;
                         }
                     }
@@ -149,14 +191,62 @@
             
             // Close any open list
             if (inList) {
-                formattedText += '</ul>';
+                formattedText += `</${listType}>`;
             }
             
             analysisText.innerHTML = formattedText;
             
-            // Add CSS class for mobile optimization
+            // Add mobile optimization class
             analysisText.classList.add('mobile-optimized');
+            
+            // Additional fix: Add span with word-break to any text node that might contain long words
+            function addWordBreakToTextNodes(element) {
+                const walker = document.createTreeWalker(
+                    element,
+                    NodeFilter.SHOW_TEXT,
+                    {
+                        acceptNode: function(node) {
+                            // Only process text nodes with content
+                            if (node.textContent.trim().length > 0) {
+                                return NodeFilter.FILTER_ACCEPT;
+                            }
+                            return NodeFilter.FILTER_REJECT;
+                        }
+                    }
+                );
+                
+                const textNodes = [];
+                while (walker.nextNode()) {
+                    textNodes.push(walker.currentNode);
+                }
+                
+                textNodes.forEach(textNode => {
+                    const parent = textNode.parentNode;
+                    if (parent && parent.tagName !== 'LI' && parent.tagName !== 'P' && parent.tagName !== 'H3' && parent.tagName !== 'H4') {
+                        const span = document.createElement('span');
+                        span.style.wordBreak = 'break-word';
+                        span.style.overflowWrap = 'break-word';
+                        span.style.display = 'inline';
+                        span.textContent = textNode.textContent;
+                        parent.replaceChild(span, textNode);
+                    }
+                });
+            }
+            
+            addWordBreakToTextNodes(analysisText);
         }
     });
+    
+    // Add CSS rule for long words dynamically
+    const style = document.createElement('style');
+    style.textContent = `
+        .analysis-text li, .analysis-text p {
+            word-break: break-word !important;
+            overflow-wrap: break-word !important;
+            -webkit-hyphens: auto !important;
+            hyphens: auto !important;
+        }
+    `;
+    document.head.appendChild(style);
 </script>
 {% endblock %}

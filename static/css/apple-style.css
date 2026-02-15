@@ -883,16 +883,46 @@ a:hover {
 
 /* ===== AI ANALYSIS RESPONSE FIXES FOR MOBILE ===== */
 
-/* Analysis text container improvements */
+/* Analysis text container improvements - ENHANCED FOR LONG WORDS */
 .analysis-text {
-    font-size: 16px;  /* Base size for readability */
-    line-height: 1.6;  /* Better line spacing */
+    font-size: 16px;
+    line-height: 1.6;
     color: var(--text-primary);
+    
+    /* CRITICAL: Force long words to break */
     word-wrap: break-word;
     overflow-wrap: break-word;
-    word-break: break-word;  /* Prevents long words from breaking layout */
+    word-break: break-word;
+    hyphens: auto;  /* Adds hyphens when words break */
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    
     max-width: 100%;
+    width: 100%;
     padding: 0.5rem 0;
+    
+    /* Ensure container doesn't hide overflow */
+    overflow-x: visible;
+    overflow-y: visible;
+}
+
+/* Force all text elements to break long words */
+.analysis-text * {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+}
+
+/* Specifically target long medical terms */
+.analysis-text li,
+.analysis-text p,
+.analysis-text span,
+.analysis-text div {
+    max-width: 100%;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 /* Preserve markdown-like formatting in analysis */
@@ -901,6 +931,7 @@ a:hover {
     margin: 1.5rem 0 0.75rem 0;
     color: var(--accent-blue);
     font-weight: 600;
+    word-break: break-word;
 }
 
 .analysis-text h4 {
@@ -908,36 +939,43 @@ a:hover {
     margin: 1.25rem 0 0.5rem 0;
     color: var(--text-primary);
     font-weight: 600;
+    word-break: break-word;
 }
 
 .analysis-text strong {
     font-weight: 600;
     color: var(--text-primary);
+    word-break: break-word;
 }
 
 .analysis-text em {
     font-style: italic;
+    word-break: break-word;
 }
 
-/* Bullet point styling */
+/* Bullet point styling with better breaking */
 .analysis-text ul, 
 .analysis-text ol {
     margin: 0.75rem 0 1rem 1.5rem;
     padding-left: 0.5rem;
+    max-width: 100%;
 }
 
 .analysis-text li {
     margin-bottom: 0.5rem;
     line-height: 1.5;
-    position: relative;
     list-style-type: disc;
+    max-width: 100%;
+    padding-right: 0.5rem;
+    
+    /* Critical for long words */
+    word-break: break-word;
+    overflow-wrap: break-word;
+    -webkit-hyphens: auto;
+    hyphens: auto;
 }
 
-/* Numbered list styling */
-.analysis-text ol {
-    list-style-type: decimal;
-}
-
+/* Special handling for numbered lists */
 .analysis-text ol li {
     list-style-type: decimal;
 }
@@ -945,6 +983,8 @@ a:hover {
 /* Special formatting for the 7 sections with emoji */
 .analysis-text p {
     margin-bottom: 0.75rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 /* Emoji and section title styling */
@@ -953,19 +993,22 @@ a:hover {
     font-size: 1.2rem;
     margin: 1.5rem 0 0.75rem 0;
     color: var(--text-primary);
+    word-break: break-word;
 }
 
-/* Mobile-specific overrides */
+/* Mobile-specific overrides - ENHANCED */
 @media (max-width: 768px) {
     .result-card {
         padding: 1rem !important;
-        margin: 0 !important;
+        margin: 0.5rem !important;
         border-radius: var(--radius-medium);
+        width: calc(100% - 1rem) !important;  /* Ensure full width with margin */
     }
     
     .analysis-text {
-        font-size: 15px;  /* Slightly smaller but still readable */
+        font-size: 15px;
         padding: 0 0.25rem;
+        width: 100%;
     }
     
     .analysis-text h3 {
@@ -981,12 +1024,19 @@ a:hover {
     /* Better bullet spacing on mobile */
     .analysis-text ul, 
     .analysis-text ol {
-        margin: 0.5rem 0 0.75rem 1.25rem;
+        margin: 0.5rem 0 0.75rem 1rem;
+        padding-left: 0.25rem;
     }
     
     .analysis-text li {
-        margin-bottom: 0.5rem;
-        padding-right: 0.5rem;  /* Prevents text from touching edge */
+        margin-bottom: 0.6rem;
+        padding-right: 0.25rem;
+        
+        /* Force break for long medical terms */
+        word-break: break-word;
+        overflow-wrap: break-word;
+        -webkit-hyphens: auto;
+        hyphens: auto;
     }
     
     /* Ensure code blocks wrap */
@@ -997,6 +1047,18 @@ a:hover {
         background-color: var(--bg-tertiary);
         padding: 0.2rem 0.4rem;
         border-radius: var(--radius-small);
+        word-break: break-word;
+    }
+    
+    /* Force container to use full width */
+    .result-content {
+        width: 100%;
+        padding: 0;
+    }
+    
+    .analysis-section {
+        width: 100%;
+        padding: 0;
     }
 }
 
@@ -1008,15 +1070,15 @@ a:hover {
     
     .analysis-text ul, 
     .analysis-text ol {
-        margin-left: 1rem;
+        margin-left: 0.75rem;
     }
     
     .analysis-text li {
-        margin-bottom: 0.6rem;
+        margin-bottom: 0.7rem;
     }
 }
 
-/* Fix for result card container */
+/* Fix for result card container - ENHANCED */
 .result-card {
     background-color: var(--bg-secondary);
     border-radius: var(--radius-large);
@@ -1025,12 +1087,14 @@ a:hover {
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;  /* Prevents horizontal scroll */
+    box-sizing: border-box;  /* Include padding in width calculation */
 }
 
 .result-content {
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 /* Ensure the analysis section doesn't overflow */
@@ -1039,9 +1103,21 @@ a:hover {
     max-width: 100%;
     overflow-x: hidden;
     margin-bottom: 2rem;
+    box-sizing: border-box;
 }
 
 .analysis-section h3 {
     margin-bottom: 1rem;
     color: var(--accent-blue);
+}
+
+/* Critical fix for the specific word in your screenshot */
+.analysis-text li:contains("hypercholesterolemia") {
+    word-break: break-all;  /* Force break for this specific long word */
+}
+
+/* General long word breaker for any text */
+.long-word-break {
+    word-break: break-all !important;
+    overflow-wrap: break-word !important;
 }
